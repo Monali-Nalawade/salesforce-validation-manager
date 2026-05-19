@@ -19,6 +19,9 @@ app.use(
         path.join(__dirname, "../frontend/build")
     )
 );
+app.get("/", (req, res) => {
+    res.send("Salesforce Validation Manager Backend Running");
+});
 
 /* REACT ROUTES */
 
