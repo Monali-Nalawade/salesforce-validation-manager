@@ -86,63 +86,66 @@ const DashboardPage = () => {
 
     /*    FETCH VALIDATION RULES */
 
-    const fetchRules = async () => {
+   const fetchRules = async () => {
 
-        try {
+    try {
 
-            setLoading(true);
+        setLoading(true);
 
-            const accessToken =
-                localStorage.getItem(
-                    "accessToken"
-                );
+        const accessToken =
+            localStorage.getItem("accessToken");
 
-            const instanceUrl =
-                localStorage.getItem(
-                    "instanceUrl"
-                );
+        const instanceUrl =
+            localStorage.getItem("instanceUrl");
 
-            console.log(
-                "TOKEN:",
-                accessToken
-            );
+        console.log("TOKEN:", accessToken);
+        console.log("INSTANCE:", instanceUrl);
 
-            console.log(
-                "INSTANCE:",
+        const response = await API.post(
+            "/auth/validation-rules",
+            {
+                accessToken,
                 instanceUrl
-            );
+            }
+        );
 
-            const response =
-                await API.post(
-                    "/validation-rules",
-                    {
-                        accessToken,
-                        instanceUrl
-                    }
-                );
+        console.log("RULE RESPONSE:", response.data);
 
-            console.log(response.data);
+        if (Array.isArray(response.data)) {
 
             setRules(response.data);
 
-        } catch (error) {
-
-            console.log(error);
+        } else {
 
             console.log(
-                error.response?.data
+                "INVALID RESPONSE:",
+                response.data
             );
+
+            setRules([]);
 
             alert(
+                response.data.error ||
                 "Failed to fetch validation rules"
             );
-
-        } finally {
-
-            setLoading(false);
         }
-    };
 
+    } catch (error) {
+
+        console.log(error);
+
+        setRules([]);
+
+        alert(
+            error.response?.data?.error ||
+            "Failed to fetch validation rules"
+        );
+
+    } finally {
+
+        setLoading(false);
+    }
+};
     /* TOGGLE RULE    */
 
     const handleToggle = (id) => {
@@ -388,7 +391,8 @@ const DashboardPage = () => {
 
                             </Box>
 
-                            {rules.map((rule) => (
+                            {Array.isArray(rules) &&
+                             rules.map((rule) => (
 
                                 <Box
                                     key={rule.Id}
