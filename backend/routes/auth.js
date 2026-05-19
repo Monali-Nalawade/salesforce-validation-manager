@@ -258,77 +258,140 @@ router.post(
     }
 );              /*    Deploy Validation Rules        */
 
-                  router.post(
-                      "/deploy",
-                      async (req, res) => {
+                /*
+-----------------------------------------
+Deploy Validation Rules
+-----------------------------------------
+*/
 
-                          try {
+router.post(
+    "/deploy",
+    async (req, res) => {
 
-                              const {
-                                  accessToken,
-                                  instanceUrl,
-                                  rules
-                              } = req.body;
+        try {
 
-                              for (const rule of rules) {
+            const {
+                accessToken,
+                instanceUrl,
+                rules
+            } = req.body;
 
-                                  /* UPDATE ACTIVE STATUS    */
+            for (const rule of rules) {
 
-                                  rule.Metadata.active =
-                                      rule.Active;
+                /*
+                ---------------------------------
+                GET COMPLETE METADATA
+                ---------------------------------
+                */
 
-                                  const url =
+                const metadataQuery =
 
-                                      `${instanceUrl}` +
+                    `SELECT Id, FullName, Metadata ` +
 
-                                      `/services/data/v59.0/tooling/sobjects/ValidationRule/` +
+                    `FROM ValidationRule ` +
 
-                                      `${rule.Id}`;
+                    `WHERE Id='${rule.Id}'`;
 
-                                  console.log(
-                                      "UPDATING:",
-                                      rule.ValidationName
-                                  );
+                const metadataResponse =
+                    await axios.get(
 
-                                  await axios.patch(
+                        `${instanceUrl}/services/data/v59.0/tooling/query`,
 
-                                      url,
+                        {
+                            headers: {
+                                Authorization:
+                                    `Bearer ${accessToken}`
+                            },
 
-                                      {
-                                          Metadata:
-                                              rule.Metadata
-                                      },
+                            params: {
+                                q: metadataQuery
+                            }
+                        }
+                    );
 
-                                      {
-                                          headers: {
+                const metadataRecord =
+                    metadataResponse.data.records[0];
 
-                                              Authorization:
-                                                  `Bearer ${accessToken}`,
+                /*
+                ---------------------------------
+                COMPLETE METADATA
+                ---------------------------------
+                */
 
-                                              "Content-Type":
-                                                  "application/json"
-                                          }
-                                      }
-                                  );
-                              }
+                const updatedMetadata = {
 
-                              res.json({
-                                  success: true
-                              });
+                    ...metadataRecord.Metadata,
 
-                          } catch (error) {
+                    active: rule.Active
+                };
 
-                              console.log(
-                                  "DEPLOY ERROR:",
-                                  error.response?.data ||
-                                  error.message
-                              );
+                /*
+                ---------------------------------
+                UPDATE VALIDATION RULE
+                ---------------------------------
+                */
 
-                              res.status(500).json({
-                                  error:
-                                      "Deployment failed"
-                              });
-                          }
-                      }
-                  );
+                const updateUrl =
+
+                    `${instanceUrl}` +
+
+                    `/services/data/v59.0/tooling/sobjects/ValidationRule/` +
+
+                    `${rule.Id}`;
+
+                console.log(
+                    "UPDATING:",
+                    rule.ValidationName,
+                    "->",
+                    rule.Active
+                );
+
+                const updateResponse =
+                    await axios.patch(
+
+                        updateUrl,
+
+                        {
+                            Metadata:
+                                updatedMetadata
+                        },
+
+                        {
+                            headers: {
+
+                                Authorization:
+                                    `Bearer ${accessToken}`,
+
+                                "Content-Type":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+                console.log(
+                    "UPDATED:",
+                    updateResponse.data
+                );
+            }
+
+            res.json({
+                success: true
+            });
+
+        } catch (error) {
+
+            console.log(
+                "DEPLOY ERROR:",
+                error.response?.data ||
+                error.message
+            );
+
+            res.status(500).json({
+                error:
+                    "Deployment failed"
+            });
+        }
+    }
+);              
+)
 module.exports = router;
