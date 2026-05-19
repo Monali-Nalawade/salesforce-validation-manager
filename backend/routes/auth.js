@@ -121,19 +121,19 @@ router.get("/callback", async (req, res) => {
 
         /*        REDIRECT TO FRONTEND        */
 
-        const redirectUrl =
+       const redirectUrl =
 
-            `http://localhost:3000/dashboard` +
+    `https://sfswitch-4tts.onrender.com/dashboard` +
 
-            `?accessToken=${encodeURIComponent(access_token)}` +
+    `?accessToken=${encodeURIComponent(access_token)}` +
 
-            `&instanceUrl=${encodeURIComponent(instance_url)}` +
+    `&instanceUrl=${encodeURIComponent(instance_url)}` +
 
-            `&username=${encodeURIComponent(userData.username)}` +
+    `&username=${encodeURIComponent(userData.username)}` +
 
-            `&email=${encodeURIComponent(userData.email)}` +
+    `&email=${encodeURIComponent(userData.email)}` +
 
-            `&organization=${encodeURIComponent(userData.organization_id)}`;
+    `&organization=${encodeURIComponent(userData.organization_id)}`;
 
         console.log(
             "REDIRECT URL:",
