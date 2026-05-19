@@ -5,7 +5,7 @@ const LoginPage = () => {
     const handleLogin = () => {
 
         window.location.href =
-            "http://localhost:5000/auth/login";
+    "https://sfswitch-4tts.onrender.com/auth/login";
     };
 
     return (
