@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "/auth"
+    baseURL: "https://sfswitch-4tts.onrender.com"
 });
 
 export default API;
