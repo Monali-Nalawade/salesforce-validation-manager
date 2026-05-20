@@ -301,30 +301,38 @@ const DashboardPage = () => {
             setDeployLoading(false);
         }
     };
+    /* Logout */
+    const handleLogout = () => {
+
+    localStorage.clear();
+
+    window.location.href = "/";
+};
 
     return (
+ <Box
+    sx={{
+        minHeight: "100vh",
+        background:
+            "linear-gradient(135deg, #0f172a, #1e293b)",
+        py: 5
+    }}
+>
+     <Container maxWidth="md">
+<Paper
+    sx={{
+        p: 4,
+        borderRadius: 4,
+        backgroundColor: "#1e293b",
+        color: "white"
+    }}
+>
 
-        <Box
-            sx={{
-                minHeight: "100vh",
-                py: 5
-            }}
-        >
-
-            <Container maxWidth="md">
-
-                <Paper
-                    sx={{
-                        p: 4,
-                        borderRadius: 3
-                    }}
-                >
-
-                    <Typography
-                        variant="h4"
-                        fontWeight="bold"
-                        mb={3}
-                    >
+<Typography sx={{ color: "white" }}>
+variant="h4"
+fontWeight="bold"
+     mb={3}
+>
                         Salesforce Validation Manager
                     </Typography>
 
@@ -363,6 +371,13 @@ const DashboardPage = () => {
                     >
                         Get Metadata
                     </Button>
+        <Button
+        variant="contained"
+        color="error"
+        onClick={handleLogout}
+        >
+        Logout
+    </Button>
 
                     {loading && (
 
