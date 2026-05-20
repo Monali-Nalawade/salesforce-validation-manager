@@ -23,7 +23,7 @@ https://sfswitch-4tts.onrender.com
 ## Screenshots
 ## Login Page
 
-![Login Page](./screenshots/Login-Page.png)
+![Login Page](./screenshots/Login_Page.png)
 
 ## Dashboard
 
