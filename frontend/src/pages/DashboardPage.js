@@ -33,8 +33,6 @@ const DashboardPage = () => {
             organization: ""
         });
 
-    /*STORE URL PARAMS*/
-
     useEffect(() => {
 
         const params =
@@ -56,8 +54,6 @@ const DashboardPage = () => {
 
         const organization =
             params.get("organization");
-
-        /* SAVE TO LOCAL STORAGE  */
 
         if (accessToken) {
 
@@ -99,8 +95,6 @@ const DashboardPage = () => {
             );
         }
 
-        /*  LOAD USER DATA*/
-
         setUserData({
 
             username:
@@ -121,8 +115,6 @@ const DashboardPage = () => {
 
     }, []);
 
-    /*    FETCH VALIDATION RULES */
-
     const fetchRules = async () => {
 
         try {
@@ -139,16 +131,6 @@ const DashboardPage = () => {
                     "instanceUrl"
                 );
 
-            console.log(
-                "TOKEN:",
-                accessToken
-            );
-
-            console.log(
-                "INSTANCE:",
-                instanceUrl
-            );
-
             const response =
                 await API.post(
 
@@ -159,11 +141,6 @@ const DashboardPage = () => {
                         instanceUrl
                     }
                 );
-
-            console.log(
-                "RULES:",
-                response.data
-            );
 
             if (
                 Array.isArray(
@@ -194,8 +171,6 @@ const DashboardPage = () => {
         }
     };
 
-    /*    TOGGLE    */
-
     const handleToggle = (id) => {
 
         const updatedRules =
@@ -220,8 +195,6 @@ const DashboardPage = () => {
         setRules(updatedRules);
     };
 
-    /*    ENABLE ALL    */
-
     const enableAll = () => {
 
         const updatedRules =
@@ -235,8 +208,6 @@ const DashboardPage = () => {
         setRules(updatedRules);
     };
 
-    /*    DISABLE ALL    */
-
     const disableAll = () => {
 
         const updatedRules =
@@ -249,8 +220,6 @@ const DashboardPage = () => {
 
         setRules(updatedRules);
     };
-
-    /*    DEPLOY    */
 
     const handleDeploy = async () => {
 
@@ -268,20 +237,15 @@ const DashboardPage = () => {
                     "instanceUrl"
                 );
 
-            const response =
-                await API.post(
+            await API.post(
 
-                    "/auth/deploy",
+                "/auth/deploy",
 
-                    {
-                        accessToken,
-                        instanceUrl,
-                        rules
-                    }
-                );
-
-            console.log(
-                response.data
+                {
+                    accessToken,
+                    instanceUrl,
+                    rules
+                }
             );
 
             alert(
@@ -301,213 +265,203 @@ const DashboardPage = () => {
             setDeployLoading(false);
         }
     };
-    /* Logout */
+
     const handleLogout = () => {
 
-    localStorage.clear();
+        localStorage.clear();
 
-    window.location.href = "/";
-};
+        window.location.href = "/";
+    };
 
-return (
+    return (
 
-    <Box
-        sx={{
-            minHeight: "100vh",
-            background:
-                "linear-gradient(135deg, #0f172a, #1e293b)",
-            py: 5
-        }}
-    >
+        <Box
+            sx={{
+                minHeight: "100vh",
+                background:
+                    "linear-gradient(135deg, #0f172a, #1e293b)",
+                py: 5
+            }}
+        >
 
-        <Container maxWidth="md">
+            <Container maxWidth="md">
 
-            <Paper
-                sx={{
-                    p: 4,
-                    borderRadius: 4,
-                    backgroundColor: "#1e293b",
-                    color: "white"
-                }}
-            >
-
-                <Box
+                <Paper
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        mb: 3
+                        p: 4,
+                        borderRadius: 4,
+                        backgroundColor: "#1e293b",
+                        color: "white"
                     }}
                 >
 
-                    <Typography
-                        variant="h4"
-                        fontWeight="bold"
-                        sx={{ color: "white" }}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent:
+                                "space-between",
+                            alignItems: "center",
+                            mb: 3
+                        }}
                     >
-                        Salesforce Validation Manager
+
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                        >
+                            Salesforce Validation Manager
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            color="error"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </Button>
+
+                    </Box>
+
+                    <Typography mb={1}>
+                        <strong>Username:</strong>{" "}
+                        {userData.username}
+                    </Typography>
+
+                    <Typography mb={1}>
+                        <strong>Email:</strong>{" "}
+                        {userData.email}
+                    </Typography>
+
+                    <Typography mb={4}>
+                        <strong>Organization:</strong>{" "}
+                        {userData.organization}
                     </Typography>
 
                     <Button
                         variant="contained"
-                        color="error"
-                        onClick={handleLogout}
+                        onClick={fetchRules}
                     >
-                        Logout
+                        Get Metadata
                     </Button>
 
-                </Box>
+                    {loading && (
 
-                <Typography
-                    mb={1}
-                    sx={{ color: "white" }}
-                >
-                    <strong>Username:</strong>{" "}
-                    {userData.username}
-                </Typography>
-
-                <Typography
-                    mb={1}
-                    sx={{ color: "white" }}
-                >
-                    <strong>Email:</strong>{" "}
-                    {userData.email}
-                </Typography>
-
-                <Typography
-                    mb={4}
-                    sx={{ color: "white" }}
-                >
-                    <strong>Organization:</strong>{" "}
-                    {userData.organization}
-                </Typography>
-
-                <Button
-                    variant="contained"
-                    onClick={fetchRules}
-                >
-                    Get Metadata
-                </Button>
-
-                {loading && (
-
-                    <Box sx={{ mt: 3 }}>
-                        <CircularProgress />
-                    </Box>
-                )}
-
-                {rules.length > 0 && (
-
-                    <Box sx={{ mt: 5 }}>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                gap: 2,
-                                mb: 3
-                            }}
-                        >
-
-                            <Button
-                                variant="contained"
-                                color="success"
-                                onClick={enableAll}
-                            >
-                                Enable All
-                            </Button>
-
-                            <Button
-                                variant="contained"
-                                color="error"
-                                onClick={disableAll}
-                            >
-                                Disable All
-                            </Button>
-
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                onClick={handleDeploy}
-                            >
-                                {
-                                    deployLoading
-                                        ? "Deploying..."
-                                        : "Deploy Changes"
-                                }
-                            </Button>
-
+                        <Box sx={{ mt: 3 }}>
+                            <CircularProgress />
                         </Box>
+                    )}
 
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent:
-                                    "space-between",
-                                mb: 2
-                            }}
-                        >
+                    {rules.length > 0 && (
 
-                            <Typography
-                                sx={{
-                                    color: "white",
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                Validations
-                            </Typography>
-
-                            <Typography
-                                sx={{
-                                    color: "white",
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                Activate / Deactivate
-                            </Typography>
-
-                        </Box>
-
-                        {rules.map((rule) => (
+                        <Box sx={{ mt: 5 }}>
 
                             <Box
-                                key={rule.Id}
+                                sx={{
+                                    display: "flex",
+                                    gap: 2,
+                                    mb: 3
+                                }}
+                            >
+
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    onClick={enableAll}
+                                >
+                                    Enable All
+                                </Button>
+
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={disableAll}
+                                >
+                                    Disable All
+                                </Button>
+
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={handleDeploy}
+                                >
+                                    {
+                                        deployLoading
+                                            ? "Deploying..."
+                                            : "Deploy Changes"
+                                    }
+                                </Button>
+
+                            </Box>
+
+                            <Box
                                 sx={{
                                     display: "flex",
                                     justifyContent:
                                         "space-between",
-                                    alignItems: "center",
-                                    borderBottom:
-                                        "1px solid #374151",
-                                    py: 2
+                                    mb: 2
                                 }}
                             >
 
                                 <Typography
-                                    sx={{ color: "white" }}
+                                    fontWeight="bold"
                                 >
-                                    {
-                                        rule.ValidationName
-                                    }
+                                    Validations
                                 </Typography>
 
-                                <Switch
-                                    checked={rule.Active}
-                                    onChange={() =>
-                                        handleToggle(
-                                            rule.Id
-                                        )
-                                    }
-                                />
+                                <Typography
+                                    fontWeight="bold"
+                                >
+                                    Activate / Deactivate
+                                </Typography>
 
                             </Box>
-                        ))}
 
-                    </Box>
-                )}
+                            {rules.map((rule) => (
 
-            </Paper>
+                                <Box
+                                    key={rule.Id}
+                                    sx={{
+                                        display:
+                                            "flex",
+                                        justifyContent:
+                                            "space-between",
+                                        alignItems:
+                                            "center",
+                                        borderBottom:
+                                            "1px solid #374151",
+                                        py: 2
+                                    }}
+                                >
 
-        </Container>
+                                    <Typography>
+                                        {
+                                            rule.ValidationName
+                                        }
+                                    </Typography>
 
-    </Box>
-);
+                                    <Switch
+                                        checked={
+                                            rule.Active
+                                        }
+                                        onChange={() =>
+                                            handleToggle(
+                                                rule.Id
+                                            )
+                                        }
+                                    />
+
+                                </Box>
+                            ))}
+
+                        </Box>
+                    )}
+
+                </Paper>
+
+            </Container>
+
+        </Box>
+    );
+};
+
+export default DashboardPage;
