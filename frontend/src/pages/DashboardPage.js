@@ -33,11 +33,7 @@ const DashboardPage = () => {
             organization: ""
         });
 
-    /*
-    -----------------------------------
-    STORE URL PARAMS
-    -----------------------------------
-    */
+    /*STORE URL PARAMS*/
 
     useEffect(() => {
 
@@ -61,9 +57,7 @@ const DashboardPage = () => {
         const organization =
             params.get("organization");
 
-        /*
-        SAVE TO LOCAL STORAGE
-        */
+        /* SAVE TO LOCAL STORAGE  */
 
         if (accessToken) {
 
@@ -105,9 +99,7 @@ const DashboardPage = () => {
             );
         }
 
-        /*
-        LOAD USER DATA
-        */
+        /*  LOAD USER DATA*/
 
         setUserData({
 
@@ -129,11 +121,7 @@ const DashboardPage = () => {
 
     }, []);
 
-    /*
-    -----------------------------------
-    FETCH VALIDATION RULES
-    -----------------------------------
-    */
+    /*    FETCH VALIDATION RULES */
 
     const fetchRules = async () => {
 
@@ -177,10 +165,6 @@ const DashboardPage = () => {
                 response.data
             );
 
-            /*
-            IMPORTANT FIX
-            */
-
             if (
                 Array.isArray(
                     response.data
@@ -210,11 +194,7 @@ const DashboardPage = () => {
         }
     };
 
-    /*
-    -----------------------------------
-    TOGGLE
-    -----------------------------------
-    */
+    /*    TOGGLE    */
 
     const handleToggle = (id) => {
 
@@ -240,11 +220,7 @@ const DashboardPage = () => {
         setRules(updatedRules);
     };
 
-    /*
-    -----------------------------------
-    ENABLE ALL
-    -----------------------------------
-    */
+    /*    ENABLE ALL    */
 
     const enableAll = () => {
 
@@ -259,11 +235,7 @@ const DashboardPage = () => {
         setRules(updatedRules);
     };
 
-    /*
-    -----------------------------------
-    DISABLE ALL
-    -----------------------------------
-    */
+    /*    DISABLE ALL    */
 
     const disableAll = () => {
 
@@ -278,11 +250,7 @@ const DashboardPage = () => {
         setRules(updatedRules);
     };
 
-    /*
-    -----------------------------------
-    DEPLOY
-    -----------------------------------
-    */
+    /*    DEPLOY    */
 
     const handleDeploy = async () => {
 
@@ -339,8 +307,6 @@ const DashboardPage = () => {
         <Box
             sx={{
                 minHeight: "100vh",
-                backgroundColor:
-                    "#f4f7fb",
                 py: 5
             }}
         >
