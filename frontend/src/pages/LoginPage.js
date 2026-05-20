@@ -10,15 +10,14 @@ const LoginPage = () => {
 
     return (
 
-        <Box
-            sx={{
-                height: "100vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#f4f7fb"
-            }}
-        >
+       <Box
+    sx={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+    }}
+     >
 
             <Paper
                 elevation={3}
