@@ -15,3 +15,24 @@ Features:
 - Deploy Metadata Changes
 - Responsive UI
 - Hosted on Render
+
+## Live Demo
+
+https://sfswitch-4tts.onrender.com
+
+## Screenshots
+## Login Page
+
+![Login Page](./screenshots/Login-Page.png)
+
+## Dashboard
+
+![Dashboard](./screenshots/Dashboard_Page.png)
+
+##Validations
+![Validations](./screenshots/Validations.png)
+
+## Author
+
+Monali Nalawade
+
