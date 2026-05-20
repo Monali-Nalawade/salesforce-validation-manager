@@ -97,9 +97,6 @@ router.get("/callback", async (req, res) => {
             instance_url,
             id
         } = tokenResponse.data;
-
-        /*      GET USER INFO     */
-
         const userResponse =
             await axios.get(
                 id,
@@ -278,8 +275,6 @@ router.post(
                     rule.ValidationName
                 );
 
-                /*    GET FULL METADATA       */
-
                 const query =
 
                     `SELECT Id, FullName, Metadata ` +
@@ -308,8 +303,6 @@ router.post(
                 const metadataRecord =
                     fetchResponse.data.records[0];
 
-                /*   MODIFY ACTIVE   */
-
                 const metadata =
                     metadataRecord.Metadata;
 
@@ -320,8 +313,6 @@ router.post(
                     "SETTING ACTIVE TO:",
                     rule.Active
                 );
-
-                /*   UPDATE     */
 
                 const updateResponse =
                     await axios.patch(
@@ -349,9 +340,6 @@ router.post(
                     "SALESFORCE RESPONSE:",
                     updateResponse.data
                 );
-
-                /* VERIFY CHANGE */
-
                 const verifyResponse =
                     await axios.get(
 
