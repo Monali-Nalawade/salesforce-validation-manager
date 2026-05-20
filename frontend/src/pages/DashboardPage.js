@@ -1,44 +1,69 @@
-import React, { useState, useEffect} from "react";
-import {Box,Container, Typography,Button, CircularProgress, Switch,Paper} from "@mui/material";
+import React, {
+    useEffect,
+    useState
+} from "react";
+
+import {
+    Box,
+    Container,
+    Typography,
+    Button,
+    CircularProgress,
+    Switch,
+    Paper
+} from "@mui/material";
+
 import API from "../services/api";
 
 const DashboardPage = () => {
 
-    /*    STATES  */
+    const [rules, setRules] =
+        useState([]);
 
-    const [rules, setRules] = useState([]);
-    const [loading, setLoading] =useState(false);
-    const [deployLoading, setDeployLoading] = useState(false);
+    const [loading, setLoading] =
+        useState(false);
+
+    const [deployLoading, setDeployLoading] =
+        useState(false);
+
     const [userData, setUserData] =
-       useState({
+        useState({
             username: "",
             email: "",
             organization: ""
         });
 
-    /* STORE QUERY PARAMS TO LOCAL STORAGE    */
+    /*
+    -----------------------------------
+    STORE URL PARAMS
+    -----------------------------------
+    */
 
     useEffect(() => {
 
-        const queryParams =
+        const params =
             new URLSearchParams(
                 window.location.search
             );
 
         const accessToken =
-            queryParams.get("accessToken");
+            params.get("accessToken");
 
         const instanceUrl =
-            queryParams.get("instanceUrl");
+            params.get("instanceUrl");
 
         const username =
-            queryParams.get("username");
+            params.get("username");
 
         const email =
-            queryParams.get("email");
+            params.get("email");
 
         const organization =
-            queryParams.get("organization");
+            params.get("organization");
+
+        /*
+        SAVE TO LOCAL STORAGE
+        */
 
         if (accessToken) {
 
@@ -46,21 +71,33 @@ const DashboardPage = () => {
                 "accessToken",
                 accessToken
             );
+        }
+
+        if (instanceUrl) {
 
             localStorage.setItem(
                 "instanceUrl",
                 instanceUrl
             );
+        }
+
+        if (username) {
 
             localStorage.setItem(
                 "username",
                 username
             );
+        }
+
+        if (email) {
 
             localStorage.setItem(
                 "email",
                 email
             );
+        }
+
+        if (organization) {
 
             localStorage.setItem(
                 "organization",
@@ -68,95 +105,130 @@ const DashboardPage = () => {
             );
         }
 
-        /*  LOAD FROM LOCAL STORAGE    */
+        /*
+        LOAD USER DATA
+        */
 
         setUserData({
 
             username:
-                localStorage.getItem("username") || "",
+                localStorage.getItem(
+                    "username"
+                ) || "",
 
             email:
-                localStorage.getItem("email") || "",
+                localStorage.getItem(
+                    "email"
+                ) || "",
 
             organization:
-                localStorage.getItem("organization") || ""
+                localStorage.getItem(
+                    "organization"
+                ) || ""
         });
 
     }, []);
 
-    /*    FETCH VALIDATION RULES */
+    /*
+    -----------------------------------
+    FETCH VALIDATION RULES
+    -----------------------------------
+    */
 
-   const fetchRules = async () => {
+    const fetchRules = async () => {
 
-    try {
+        try {
 
-        setLoading(true);
+            setLoading(true);
 
-        const accessToken =
-            localStorage.getItem("accessToken");
+            const accessToken =
+                localStorage.getItem(
+                    "accessToken"
+                );
 
-        const instanceUrl =
-            localStorage.getItem("instanceUrl");
-
-        console.log("TOKEN:", accessToken);
-        console.log("INSTANCE:", instanceUrl);
-
-        const response = await API.post(
-            "/auth/validation-rules",
-            {
-                accessToken,
-                instanceUrl
-            }
-        );
-
-        console.log("RULE RESPONSE:", response.data);
-
-        if (Array.isArray(response.data)) {
-
-            setRules(response.data);
-
-        } else {
+            const instanceUrl =
+                localStorage.getItem(
+                    "instanceUrl"
+                );
 
             console.log(
-                "INVALID RESPONSE:",
+                "TOKEN:",
+                accessToken
+            );
+
+            console.log(
+                "INSTANCE:",
+                instanceUrl
+            );
+
+            const response =
+                await API.post(
+
+                    "/auth/validation-rules",
+
+                    {
+                        accessToken,
+                        instanceUrl
+                    }
+                );
+
+            console.log(
+                "RULES:",
                 response.data
             );
 
-            setRules([]);
+            /*
+            IMPORTANT FIX
+            */
+
+            if (
+                Array.isArray(
+                    response.data
+                )
+            ) {
+
+                setRules(
+                    response.data
+                );
+
+            } else {
+
+                setRules([]);
+            }
+
+        } catch (error) {
+
+            console.log(error);
 
             alert(
-                response.data.error ||
                 "Failed to fetch validation rules"
             );
+
+        } finally {
+
+            setLoading(false);
         }
+    };
 
-    } catch (error) {
-
-        console.log(error);
-
-        setRules([]);
-
-        alert(
-            error.response?.data?.error ||
-            "Failed to fetch validation rules"
-        );
-
-    } finally {
-
-        setLoading(false);
-    }
-};
-    /* TOGGLE RULE    */
+    /*
+    -----------------------------------
+    TOGGLE
+    -----------------------------------
+    */
 
     const handleToggle = (id) => {
 
         const updatedRules =
             rules.map((rule) => {
 
-                if (rule.Id === id) {
+                if (
+                    rule.Id === id
+                ) {
 
                     return {
+
                         ...rule,
+
                         Active:
                             !rule.Active
                     };
@@ -168,33 +240,49 @@ const DashboardPage = () => {
         setRules(updatedRules);
     };
 
-    /*    ENABLE ALL    */
+    /*
+    -----------------------------------
+    ENABLE ALL
+    -----------------------------------
+    */
 
     const enableAll = () => {
 
         const updatedRules =
             rules.map((rule) => ({
+
                 ...rule,
+
                 Active: true
             }));
 
         setRules(updatedRules);
     };
 
-    /*    DISABLE ALL    */
+    /*
+    -----------------------------------
+    DISABLE ALL
+    -----------------------------------
+    */
 
     const disableAll = () => {
 
         const updatedRules =
             rules.map((rule) => ({
+
                 ...rule,
+
                 Active: false
             }));
 
         setRules(updatedRules);
     };
 
-    /*    DEPLOY CHANGES    */
+    /*
+    -----------------------------------
+    DEPLOY
+    -----------------------------------
+    */
 
     const handleDeploy = async () => {
 
@@ -212,28 +300,33 @@ const DashboardPage = () => {
                     "instanceUrl"
                 );
 
-            await API.post(
-                "/deploy",
-                {
-                    accessToken,
-                    instanceUrl,
-                    rules
-                }
+            const response =
+                await API.post(
+
+                    "/auth/deploy",
+
+                    {
+                        accessToken,
+                        instanceUrl,
+                        rules
+                    }
+                );
+
+            console.log(
+                response.data
             );
 
             alert(
-                "Validation rules updated successfully"
+                "Deployment completed"
             );
 
         } catch (error) {
 
             console.log(error);
 
-            console.log(
-                error.response?.data
+            alert(
+                "Deployment failed"
             );
-
-            alert("Deployment failed");
 
         } finally {
 
@@ -246,7 +339,8 @@ const DashboardPage = () => {
         <Box
             sx={{
                 minHeight: "100vh",
-                backgroundColor: "#f4f7fb",
+                backgroundColor:
+                    "#f4f7fb",
                 py: 5
             }}
         >
@@ -267,8 +361,6 @@ const DashboardPage = () => {
                     >
                         Salesforce Validation Manager
                     </Typography>
-
-                    {/* USER DETAILS */}
 
                     <Typography mb={1}>
                         <strong>
@@ -297,11 +389,11 @@ const DashboardPage = () => {
                         }
                     </Typography>
 
-                    {/* GET METADATA BUTTON */}
-
                     <Button
                         variant="contained"
-                        onClick={fetchRules}
+                        onClick={
+                            fetchRules
+                        }
                     >
                         Get Metadata
                     </Button>
@@ -313,17 +405,14 @@ const DashboardPage = () => {
                         </Box>
                     )}
 
-                    {/* VALIDATION RULES */}
-
                     {rules.length > 0 && (
 
                         <Box sx={{ mt: 5 }}>
 
-                            {/* ACTION BUTTONS */}
-
                             <Box
                                 sx={{
-                                    display: "flex",
+                                    display:
+                                        "flex",
                                     gap: 2,
                                     mb: 3
                                 }}
@@ -332,7 +421,9 @@ const DashboardPage = () => {
                                 <Button
                                     variant="contained"
                                     color="success"
-                                    onClick={enableAll}
+                                    onClick={
+                                        enableAll
+                                    }
                                 >
                                     Enable All
                                 </Button>
@@ -340,7 +431,9 @@ const DashboardPage = () => {
                                 <Button
                                     variant="contained"
                                     color="error"
-                                    onClick={disableAll}
+                                    onClick={
+                                        disableAll
+                                    }
                                 >
                                     Disable All
                                 </Button>
@@ -361,63 +454,69 @@ const DashboardPage = () => {
 
                             </Box>
 
-                            {/* RULE LIST */}
-
                             <Box
                                 sx={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    borderBottom: "2px solid #1976d2",
-                                    pb: 1,
-                                    mb: 1,
-                                    mt: 3
+                                    display:
+                                        "flex",
+                                    justifyContent:
+                                        "space-between",
+                                    mb: 2,
+                                    fontWeight:
+                                        "bold"
                                 }}
                             >
 
-                                <Typography
-                                    fontWeight="bold"
-                                    fontSize="18px"
-                                >
-                                    Validation Rules
+                                <Typography>
+                                    Validations
                                 </Typography>
 
-                                <Typography
-                                    fontWeight="bold"
-                                    fontSize="18px"
-                                >
-                                    Activate / Deactivate
+                                <Typography>
+                                    Activate /
+                                    Deactivate
                                 </Typography>
 
                             </Box>
 
-                            {Array.isArray(rules) &&
-                             rules.map((rule) => (
+                            {rules.map(
+                                (rule) => (
 
-                                <Box
-                                    key={rule.Id}
-                                    sx={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        borderBottom: "1px solid #ddd",
-                                        py: 2
-                                    }}
-                                >
-
-                                    <Typography>
-                                        {rule.ValidationName}
-                                    </Typography>
-
-                                    <Switch
-                                        checked={rule.Active}
-                                        onChange={() =>
-                                            handleToggle(rule.Id)
+                                    <Box
+                                        key={
+                                            rule.Id
                                         }
-                                    />
+                                        sx={{
+                                            display:
+                                                "flex",
+                                            justifyContent:
+                                                "space-between",
+                                            alignItems:
+                                                "center",
+                                            borderBottom:
+                                                "1px solid #ddd",
+                                            py: 2
+                                        }}
+                                    >
 
-                                </Box>
-                            ))}
+                                        <Typography>
+                                            {
+                                                rule.ValidationName
+                                            }
+                                        </Typography>
+
+                                        <Switch
+                                            checked={
+                                                rule.Active
+                                            }
+                                            onChange={() =>
+                                                handleToggle(
+                                                    rule.Id
+                                                )
+                                            }
+                                        />
+
+                                    </Box>
+                                )
+                            )}
 
                         </Box>
                     )}
