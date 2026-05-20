@@ -10,24 +10,28 @@ const LoginPage = () => {
 
     return (
 
-       <Box
+<Box
     sx={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        background:
+            "linear-gradient(135deg, #0f172a, #1e293b)"
     }}
-     >
+>
 
             <Paper
                 elevation={3}
-                sx={{
-                    p: 5,
-                    borderRadius: 3,
-                    width: 400,
-                    textAlign: "center"
-                }}
-            >
+    sx={{
+    p: 5,
+    borderRadius: 4,
+    width: 400,
+    textAlign: "center",
+    backgroundColor: "#1e293b",
+    color: "white",
+    boxShadow: "0px 0px 20px rgba(0,0,0,0.4)"
+}}
 
                 <Typography
                     variant="h4"
@@ -46,9 +50,16 @@ const LoginPage = () => {
                     size="large"
                     fullWidth
                     onClick={handleLogin}
-                >
-                    Login with Salesforce
-                </Button>
+                sx={{
+               mt: 2,
+               backgroundColor: "#2563eb",
+              "&:hover": {
+              backgroundColor: "#1d4ed8"
+                }
+             }}
+             >
+    Login with Salesforce
+</Button>
 
             </Paper>
 
