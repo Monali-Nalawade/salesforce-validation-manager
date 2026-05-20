@@ -258,11 +258,6 @@ router.post(
     }
 );              /*    Deploy Validation Rules        */
 
-                /*
------------------------------------------
-Deploy Validation Rules
------------------------------------------
-*/
 
 router.post(
     "/deploy",
@@ -278,13 +273,14 @@ router.post(
 
             for (const rule of rules) {
 
-                /*
-                ---------------------------------
-                GET COMPLETE METADATA
-                ---------------------------------
-                */
+                console.log(
+                    "PROCESSING:",
+                    rule.ValidationName
+                );
 
-                const metadataQuery =
+                /*    GET FULL METADATA       */
+
+                const query =
 
                     `SELECT Id, FullName, Metadata ` +
 
@@ -292,7 +288,7 @@ router.post(
 
                     `WHERE Id='${rule.Id}'`;
 
-                const metadataResponse =
+                const fetchResponse =
                     await axios.get(
 
                         `${instanceUrl}/services/data/v59.0/tooling/query`,
@@ -304,56 +300,37 @@ router.post(
                             },
 
                             params: {
-                                q: metadataQuery
+                                q: query
                             }
                         }
                     );
 
                 const metadataRecord =
-                    metadataResponse.data.records[0];
+                    fetchResponse.data.records[0];
 
-                /*
-                ---------------------------------
-                COMPLETE METADATA
-                ---------------------------------
-                */
+                /*   MODIFY ACTIVE   */
 
-                const updatedMetadata = {
+                const metadata =
+                    metadataRecord.Metadata;
 
-                    ...metadataRecord.Metadata,
-
-                    active: rule.Active
-                };
-
-                /*
-                ---------------------------------
-                UPDATE VALIDATION RULE
-                ---------------------------------
-                */
-
-                const updateUrl =
-
-                    `${instanceUrl}` +
-
-                    `/services/data/v59.0/tooling/sobjects/ValidationRule/` +
-
-                    `${rule.Id}`;
+                metadata.active =
+                    rule.Active;
 
                 console.log(
-                    "UPDATING:",
-                    rule.ValidationName,
-                    "->",
+                    "SETTING ACTIVE TO:",
                     rule.Active
                 );
+
+                /*   UPDATE     */
 
                 const updateResponse =
                     await axios.patch(
 
-                        updateUrl,
+                        `${instanceUrl}/services/data/v59.0/tooling/sobjects/ValidationRule/${rule.Id}`,
 
                         {
                             Metadata:
-                                updatedMetadata
+                                metadata
                         },
 
                         {
@@ -369,8 +346,33 @@ router.post(
                     );
 
                 console.log(
-                    "UPDATED:",
+                    "SALESFORCE RESPONSE:",
                     updateResponse.data
+                );
+
+                /* VERIFY CHANGE */
+
+                const verifyResponse =
+                    await axios.get(
+
+                        `${instanceUrl}/services/data/v59.0/tooling/query`,
+
+                        {
+                            headers: {
+                                Authorization:
+                                    `Bearer ${accessToken}`
+                            },
+
+                            params: {
+                                q:
+                                    `SELECT Id, ValidationName, Active FROM ValidationRule WHERE Id='${rule.Id}'`
+                            }
+                        }
+                    );
+
+                console.log(
+                    "VERIFIED ACTIVE:",
+                    verifyResponse.data.records[0].Active
                 );
             }
 
@@ -392,6 +394,4 @@ router.post(
             });
         }
     }
-);              
-
-module.exports = router;
+);
